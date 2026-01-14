@@ -19,8 +19,9 @@ const APP_URL = process.env.APP_URL || `https://${process.env.RAILWAY_STATIC_URL
 const bot = BOT_TOKEN ? new Telegraf(BOT_TOKEN) : null;
 if (bot) {
   bot.start((ctx) => {
+    // MarkdownV2 requires escaping: _ * [ ] ( ) ~ ` > # + - = | { } . !
     ctx.replyWithMarkdownV2(
-      `*Welcome to Star Bingo Pro\\!* 🌠\n\nYour celestial wallet is linked\\. Top up via the bot and play in real-time\\.`,
+      `*Welcome to Star Bingo Pro\\!* 🌠\n\nYour celestial wallet is linked\\. Top up via the bot and play in real\\-time\\.`,
       Markup.inlineKeyboard([[Markup.button.webApp('🚀 Launch Arena', APP_URL)]])
     );
   });
@@ -191,7 +192,7 @@ app.post('/api/game/join', (req, res) => {
   if (gameState.phase !== PHASES.SELECTION) return res.status(400).json({ error: 'Selection phase closed' });
   
   gameState.participants = gameState.participants.filter(p => p.playerId !== playerId);
-  if (cardIds.length > 0) {
+  if (cardIds && cardIds.length > 0) {
     gameState.participants.push({ playerId, name, cardIds });
     
     // Notify Python DB of participation
